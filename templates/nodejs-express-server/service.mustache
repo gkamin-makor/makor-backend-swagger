@@ -1,0 +1,40 @@
+/* eslint-disable no-unused-vars */
+const model = require('../models/{{{classname}}}')
+const Service = require('./Service')
+
+{{#operations}}
+{{#operation}}
+/*
+{{#summary}}
+* {{{summary}}}
+{{/summary}}
+{{#notes}}
+* {{{notes}}}
+{{/notes}}
+*
+{{#allParams}}
+* {{paramName}} {{{dataType}}} {{{description}}}{{^required}} (optional){{/required}}
+{{/allParams}}
+{{^returnType}}
+* no response value expected for this operation
+{{/returnType}}
+{{#returnType}}
+* returns {{{returnType}}}
+{{/returnType}}
+*/
+const {{{operationId}}} = (payload) =>
+  new Promise((resolve) => {
+    model.{{operationId}}(payload, ({ data, status }) => {
+      resolve(Service.successResponse(data, status || 500))
+    })
+  })
+{{/operation}}
+{{/operations}}
+
+module.exports = {
+  {{#operations}}
+  {{#operation}}
+  {{operationId}},
+  {{/operation}}
+  {{/operations}}
+}

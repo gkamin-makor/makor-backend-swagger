@@ -1,0 +1,326 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: 1@makor-capital.com
+  description: Project research
+  title: Research
+  version: 1.0.0
+servers:
+- description: LOCAL server
+  url: http://localhost:8096
+- description: DEV server
+  url: http://10.0.0.34:8096
+tags:
+- name: onboarding
+paths:
+  /onboarding:
+    post:
+      operationId: createOnboarding
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/onboarding_create'
+        description: body structure
+        required: true
+      responses:
+        "200":
+          description: Created
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: Create contact and onboarding
+      tags:
+      - onboarding
+      x-eov-operation-handler: controllers/OnboardingController
+  /onboarding/{id}:
+    get:
+      description: ' get onboarding data by id'
+      operationId: getOnboardingDataById
+      parameters:
+      - description: id of the onboarding
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/onboarding_data'
+          description: successful operation
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: get onboarding data by id
+      tags:
+      - onboarding
+      x-eov-operation-handler: controllers/OnboardingController
+    put:
+      description: ' update onboarding by id'
+      operationId: updateOnboardingById
+      parameters:
+      - description: id of the onboarding
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/onboarding_update'
+        description: any of the following could be sended.
+        required: true
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: update onboarding by id
+      tags:
+      - onboarding
+      x-eov-operation-handler: controllers/OnboardingController
+components:
+  schemas:
+    onboarding_create:
+      properties:
+        contact_name:
+          example: example
+          type: string
+        contact_email:
+          example:
+          - example@gmail.com
+          - example2@gmail.com
+          items:
+            type: string
+          type: array
+        contact_phone:
+          example:
+          - "0500000"
+          - "0540000000"
+          items:
+            type: string
+          type: array
+        company:
+          example: company
+          type: string
+      required:
+      - company
+      - email
+      - name
+      - phone
+      type: object
+    onboarding_data:
+      example:
+        company_entity_id: 0
+        activity_description: activity_description
+        contact_position_id: 5
+        us_state_id: 1
+        phone:
+        - dialCode: 4
+          number: 6901644
+        - dialCode: 4
+          number: 6901644
+        name: name
+        assetsData:
+        - company_entity_asset_id: 0
+        - company_entity_asset_id: 1
+        regulator: regulator
+        registration_gai_location:
+          adress: adress
+        legal_entity_identifier: legal_entity_identifier
+        legal_entity_name: legal_entity_name
+        regulation_number: regulation_number
+        country_id: 6
+        email:
+        - example@gmail.com
+        - example2@gmail.com
+      properties:
+        company_entity_id:
+          type: integer
+        legal_entity_name:
+          type: string
+        legal_entity_identifier:
+          type: string
+        registration_gai_location:
+          $ref: '#/components/schemas/onboarding_data_registration_gai_location'
+        country_id:
+          type: integer
+        us_state_id:
+          type: integer
+        regulator:
+          type: string
+        regulation_number:
+          type: string
+        activity_description:
+          type: string
+        name:
+          type: string
+        email:
+          example:
+          - example@gmail.com
+          - example2@gmail.com
+          items:
+            type: string
+          type: array
+        phone:
+          example:
+          - dialCode: 4
+            number: 6901644
+          - dialCode: 4
+            number: 6901644
+          items:
+            $ref: '#/components/schemas/onboarding_data_phone'
+          type: array
+        contact_position_id:
+          type: integer
+        assetsData:
+          example:
+          - company_entity_asset_id: 0
+          - company_entity_asset_id: 1
+          items:
+            $ref: '#/components/schemas/onboarding_data_assetsData'
+          type: array
+      type: object
+    onboarding_update:
+      properties:
+        company_entity:
+          example: makor
+          type: string
+        company:
+          example: company name
+          type: string
+        legal_entity_identifier:
+          example: xxxx
+          type: string
+        registration_gapi_location:
+          $ref: '#/components/schemas/onboarding_update_registration_gapi_location'
+        country:
+          example: israel
+          type: string
+        us_state:
+          example: alabama
+          type: string
+        regulator:
+          example: regulator
+          type: string
+        regulation_number:
+          example: 123abc
+          type: string
+        activity_description:
+          example: comment
+          type: string
+        company_asset:
+          $ref: '#/components/schemas/onboarding_update_company_asset'
+        contact_position:
+          example: sales
+          type: string
+        contact_name:
+          example: name
+          type: string
+        contact_email:
+          example:
+          - example@gmail.com
+          - example2@gmail.com
+          items:
+            type: string
+          type: array
+        contact_phone:
+          example:
+          - dailing_code: "00"
+            number: "123456"
+          - dailing_code: "00"
+            number: "123456"
+          items:
+            $ref: '#/components/schemas/onboarding_update_contact_phone'
+          type: array
+      type: object
+    onboarding_data_registration_gai_location:
+      example:
+        adress: adress
+      properties:
+        adress:
+          type: string
+      type: object
+    onboarding_data_phone:
+      properties:
+        dialCode:
+          type: integer
+        number:
+          type: integer
+      type: object
+    onboarding_data_assetsData:
+      properties:
+        company_entity_asset_id:
+          type: integer
+      type: object
+    onboarding_update_registration_gapi_location:
+      example:
+        lat: 123
+        lng: 456
+      properties:
+        lat:
+          type: integer
+        lng:
+          type: integer
+      type: object
+    onboarding_update_company_asset:
+      example:
+        asset_id: fixed income
+        is_add: true
+      properties:
+        asset:
+          type: string
+        is_add:
+          type: boolean
+      type: object
+    onboarding_update_contact_phone:
+      properties:
+        dailing_code:
+          type: string
+        number:
+          type: string
+      type: object
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        implicit:
+          authorizationUrl: http://localhost:8096
+          scopes:
+            admin: Grants access to admin operations
+            author: Grants access to author operations
+            sales: Grants access to sales operations
+            compliance: Grants access to compliance operations
+            client: Grants access to client operations
+            prospect: Grants access to prospect operations
+      type: oauth2

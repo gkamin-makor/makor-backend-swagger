@@ -1,0 +1,46 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+server_generate/node_modules
+server_generate/package-lock.json
+server_generate/error.log
+server_generate/combined.log
+server_generate/uploaded_files
+server_generate/bucket_files
+server_generate/*.env
+*mwb.bak
+
+/.pnp
+.pnp.js
+*.jar
+*.env
+*.log
+*.cmd
+*.p8
+*.vscode
+*.env
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+/.idea
+
+
+# config.js file
+config_env.js
+*.ppk
+C:/workResearch/research/server_generate/certificates/id_rsa

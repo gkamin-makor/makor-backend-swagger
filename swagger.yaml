@@ -1,0 +1,294 @@
+openapi: "3.0.0"
+info:
+  version: "1.0.0"
+  title: "Research"
+  description: "Project research"
+  contact:
+    email: "1@makor-capital.com"
+servers:
+  - url: "http://localhost:8096"
+    description: "LOCAL server"
+  - url: "http://10.0.0.34:8096"
+    description: "DEV server"
+tags:
+  - name: "onboarding"
+paths:
+
+  /onboarding:
+    post:
+      tags:
+        - "onboarding"
+      summary: "Create contact and onboarding"
+      operationId: "createOnboarding"
+      requestBody:
+        description: body structure
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/onboarding_create"
+      responses:
+        "200":
+          description: "Created"
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "500":
+          description: "Internal Server Error"
+
+  /onboarding/{id}:
+
+    get:
+      tags:
+        - "onboarding"
+      summary: "get onboarding data by id"
+      description: " get onboarding data by id"
+      operationId: "getOnboardingDataById"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of the onboarding
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/onboarding_data"
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "500":
+          description: "Internal Server Error"
+
+    put:
+      tags:
+        - "onboarding"
+      summary: "update onboarding by id"
+      description: " update onboarding by id"
+      operationId: "updateOnboardingById"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of the onboarding
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: any of the following could be sended.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/onboarding_update"
+      responses:
+        "200":
+          description: "successful operation"
+         
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "500":
+          description: "Internal Server Error"
+
+     
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    OAuth2:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://localhost:8096
+          scopes:
+            "admin": Grants access to admin operations
+            "author": Grants access to author operations
+            "sales": Grants access to sales operations
+            "compliance": Grants access to compliance operations
+            "client": Grants access to client operations
+            "prospect": Grants access to prospect operations
+  schemas:
+    onboarding_create:
+      type: object
+      properties:
+        contact_name: 
+          type: string
+          example: "example"
+        contact_email: 
+          type: array
+          items:
+            type: string
+          example: ["example@gmail.com","example2@gmail.com"]
+        contact_phone:
+          type: array
+          items:
+            type: string
+          example: ["0500000","0540000000"]
+        company:
+          type: string
+          example: company
+      required:
+        - name
+        - email
+        - phone
+        - company
+    onboarding_data:
+      type: object
+      properties:
+        company_entity_id:
+          type: integer
+        legal_entity_name:
+          type: string
+        legal_entity_identifier:
+          type: string
+        registration_gai_location:
+          type: object
+          properties:
+            adress:
+              type: string
+        country_id:
+          type: integer
+        us_state_id:
+          type: integer
+        regulator:
+          type: string
+        regulation_number:
+          type: string
+        activity_description:
+          type: string
+        name:
+          type: string
+        email:
+          type: array
+          items:
+            type: string
+          example: ["example@gmail.com","example2@gmail.com"]
+        phone:
+          type: array
+          items:
+            type: object
+            properties:
+              dialCode:
+                type: integer
+              number:
+                type: integer
+          example: [{dialCode: 04,number: 6901644},{dialCode: 04,number: 6901644}]
+        contact_position_id:
+          type: integer
+        assetsData:
+          type: array
+          items:
+            type: object
+            properties:
+              company_entity_asset_id:
+                type: integer
+          example: [{company_entity_asset_id: 0},{company_entity_asset_id: 1}]
+    onboarding_update:
+      type: object
+      properties:
+        company_entity:
+          type: string
+          example: makor
+
+        company:
+          type: string
+          example: company name
+
+        legal_entity_identifier:
+          type: string
+          example: xxxx
+
+        registration_gapi_location:
+          type: object
+          properties:
+            lat:
+              type: integer
+            lng:
+              type: integer
+          example: {lat: 123, lng: 456}
+
+        country:
+          type: string
+          example: israel
+
+        us_state:
+          type: string
+          example: alabama
+
+        regulator:
+          type: string
+          example: regulator
+
+        regulation_number:
+          type: string
+          example: 123abc
+
+        activity_description:
+          type: string
+          example: comment
+
+        company_asset:
+          type: object
+          properties:
+            asset:
+              type: string
+            is_add:
+              type: boolean
+          example: {asset_id: "fixed income", is_add: true}
+
+        contact_position:
+          type: string
+          example: sales
+
+        contact_name:
+          type: string
+          example: name
+
+        contact_email:
+          type: array
+          items:
+            type: string
+          example: ["example@gmail.com","example2@gmail.com"]
+
+        contact_phone:
+          type: array
+          items:
+            type: object
+            properties:
+              dailing_code:
+                type: string
+              number:
+                type: string
+          example: [{dailing_code: "00",number: "123456"},{dailing_code: "00",number: "123456"}]
+          
+
+        
+          
+
+
+
+      
+        
+              
+          
+               
+
+
+
