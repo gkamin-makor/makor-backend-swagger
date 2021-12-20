@@ -41,6 +41,16 @@ const get_id_by_uuid = (uuid) => {
   return `SELECT id FROM onboarding WHERE uuid='${uuid}'`
 }
 
+const insert_asset = (onboarding_id,asset_id) => {
+  return `insert into onboarding_has_company_asset values(${onboarding_id},${asset_id});`
+}
+
+const remove_asset = (onboarding_id,asset_id) => {
+  return `delete from onboarding_has_company_asset where onboarding_id=${onboarding_id} and company_asset_id=${asset_id};`
+}
+
+
+
 
 
 module.exports = {
@@ -50,7 +60,9 @@ module.exports = {
     getonboarding_by_uuid,
     get_id_by_uuid,
     update_onboarding_by_uuid,
-    update_onboarding_contact_by_id
+    update_onboarding_contact_by_id,
+    insert_asset,
+    remove_asset
 }
 
 

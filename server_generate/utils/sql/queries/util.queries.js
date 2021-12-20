@@ -7,41 +7,49 @@ const get_table_names = (table,id) => {
 }
 
 const get_company_by_id = (id) => {
-    return `SELECT name FROM company_entity where id=${id};`
+    return `SELECT name FROM company where id=${id};`
 }
 
-const get_company_id = (name) => {
-    return `SELECT id FROM company_entity where name='${name}';`
+const get_company_id = (uuid) => {
+    return `SELECT id FROM company where uuid='${uuid}';`
 }
 
-const get_country_id = (name) => {
-    return `SELECT id FROM country WHERE name='${name}';`
+const get_country_id = (code) => {
+    return `SELECT id FROM country WHERE  iso_code_2='${code}';`
 }
 
-const get_state_id = (name) => {
-    return `SELECT id FROM us_state WHERE name='${name}';`
+const get_state_id = (abbreviation) => {
+    return `SELECT id FROM us_state WHERE abbreviation='${abbreviation}';`
 }
 
-const get_asset_id = (name) => {
-    return `SELECT id FROM asset WHERE name='${name}';`
+const get_asset_id = (uuid) => {
+    return `SELECT asset_id FROM company_asset WHERE uuid='${uuid}';`
 }
 
-const get_position_id = (name) => {
-    return `SELECT id FROM contact_position WHERE name='${name}';`
+const get_position_id = (uuid) => {
+    return `SELECT id FROM contact_position WHERE uuid='${uuid}';`
 }
 
 const insert_has_company_entity_asset = (onboardingId,assetId) => {
     return `
-    INSERT INTO onboarding_has_company_entity_asset(onboarding_id,company_entity_asset_id) VALUES(${onboardingId},${assetId});`
+    INSERT INTO onboarding_has_company_asset(onboarding_id,company_entity_asset_id) VALUES(${onboardingId},${assetId});`
 }
 
 const remove_has_company_entity_asset = (onboardingId,assetId) => {
     return `
-    DELETE FROM onboarding_has_company_entity_asset WHERE onboarding_id = ${onboardingId} and company_entity_asset_id = ${assetId};`
+    DELETE FROM onboarding_has_company_asset WHERE onboarding_id = ${onboardingId} and company_entity_asset_id = ${assetId};`
 }
 
 const get_contact_position_name = (id) => {
     return `SELECT name FROM contact_position WHERE id=${id}`
+}
+
+const get_regulator_id = (uuid) => {
+    return `SELECT id FROM regulator WHERE uuid='${uuid}'`
+}
+
+const get_monday_id = (uuid) => {
+    return `SELECT monday_id FROM onboarding WHERE uuid='${uuid}'`
 }
 
 
@@ -58,5 +66,7 @@ module.exports = {
     get_position_id,
     insert_has_company_entity_asset,
     remove_has_company_entity_asset,
-    get_contact_position_name
+    get_contact_position_name,
+    get_regulator_id,
+    get_monday_id
 }

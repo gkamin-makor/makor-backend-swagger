@@ -12,16 +12,11 @@ const createOnboarding = async (request, response) => {
   await Controller.handleRequest(request, response, service.createOnboarding)
 }
 
-const getOnboardingDataById = async (request, response) => {
-  await Controller.handleRequest(request, response, service.getOnboardingDataById)
-}
-
 const updateOnboardingById = async (request, response) => {
   await Controller.handleRequest(request, response, service.updateOnboardingById)
 }
 
 module.exports = {
   createOnboarding,
-  getOnboardingDataById,
   updateOnboardingById,
 }

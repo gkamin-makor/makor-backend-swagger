@@ -129,8 +129,8 @@ async function createMondayOnBoarding(name,email,phone,legalName,companyId,posit
   try {
 
 
-
     var [company] = await dbHelper.get(utilQueries.get_company_by_id(companyId))
+
 
 
     company = company.name
@@ -172,13 +172,74 @@ async function createMondayOnBoarding(name,email,phone,legalName,companyId,posit
   }
 }
 
+async function updateMondayOnBoarding(uuid, data) {
+  try {
+
+    var [field,updatedValue] = Object.entries(data)[0]
+
+
+    const fieldsMap = {
+
+      company_id: "text",
+      legal_entity_name: "text_12",
+      legal_entity_identifier: "text_2",
+      registration_gapi_location: "text_3",
+      country_id: "text_4",
+      us_state_id: "text_5",
+      regulator_id: "text_6",
+      regulation_number: "text_7",
+      activity_description: "text_8",
+      contact_position_id: "text83",
+      name: "text1",
+      email: "text5",
+      phone: "text11",
+      progress: "status",
+      company_asset_id: "text_9",
+      agreed_at: "status0"
+      
+    };
+
+
+    var [itemId] = await dbHelper.get(utilQueries.get_monday_id(uuid))
+    itemId = itemId.monday_id
 
 
 
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: process.env.TOKEN,
+    };
+
+    const body = {
+      query: `
+          mutation ($boardId: Int!, $itemId: Int!, $columnId:String! $columnValue: String!) {
+            change_simple_column_value (
+              board_id: $boardId,
+              item_id: $itemId,
+              column_id: $columnId,
+              value: $columnValue
+            ) {
+              id
+            }
+          }
+          `,
+      variables: {
+        boardId: +process.env.BOARD_ID,
+        itemId: +itemId,
+        columnId: fieldsMap[fieldToUpdate.field],
+        columnValue: updatedValue === 'null'? '' : updatedValue,
+      },
+    };
+
+     axios.post("https://api.monday.com/v2", body, { headers }).catch(err => console.log(err))
+  } catch (err) {
+    throw err;
+  }
+}
 
 
 
 module.exports = {
-  // updateMondayOnBoarding,
-  createMondayOnBoarding,
+  updateMondayOnBoarding,
+  createMondayOnBoarding
 };
