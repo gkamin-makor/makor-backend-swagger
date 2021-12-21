@@ -26,6 +26,10 @@ const get_asset_id = (uuid) => {
     return `SELECT asset_id FROM company_asset WHERE uuid='${uuid}';`
 }
 
+const get_assets_names = (ids) => {
+    return `select name from asset where id in (${ids})`
+}
+
 const get_position_id = (uuid) => {
     return `SELECT id FROM contact_position WHERE uuid='${uuid}';`
 }
@@ -52,6 +56,23 @@ const get_monday_id = (uuid) => {
     return `SELECT monday_id FROM onboarding WHERE uuid='${uuid}'`
 }
 
+const get_checked_assets_ids = (id) => {
+    return `select distinct company_asset.asset_id
+    from company_asset join onboarding_has_company_asset
+    on company_asset.id = onboarding_has_company_asset.company_asset_id
+    where onboarding_has_company_asset.onboarding_id = ${id}`
+}
+
+const get_table_name = (table,id) => {
+    return `SELECT name FROM ${table} where id=${id};`
+}
+
+const get_checked_assets = (id) => {
+    return `
+    SELECT company_asset_id FROM onboarding_has_company_asset WHERE onboarding_id = ${id};
+    `
+}
+
 
 
 
@@ -68,5 +89,9 @@ module.exports = {
     remove_has_company_entity_asset,
     get_contact_position_name,
     get_regulator_id,
-    get_monday_id
+    get_monday_id,
+    get_checked_assets_ids,
+    get_assets_names,
+    get_table_name,
+    get_checked_assets
 }

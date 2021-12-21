@@ -83,8 +83,10 @@ const createOnboarding = async (payload, result) => {
 
     //! create monday onboarding
 
+    const progress = await getProgress(onboarding_id)
 
-    const mondayItemId = await mondayUtils.createMondayOnBoarding(name,email,phone,legal_entity_name,company_id,position_name)
+
+    const mondayItemId = await mondayUtils.createMondayOnBoarding(name,email,phone,legal_entity_name,company_id,position_name,progress)
 
     //!update the returned monday id on the onboarding
 
@@ -151,12 +153,12 @@ const updateOnboardingById = async (payload, result) => {
   const key = Object.keys(processed_data)[0]
   const contact_fields = ["name","phone","email","contact_position_id"]
 
-  //handle update contact
+  //!handle update contact
   if (contact_fields.includes(key)){
 
     await update_contact(processed_data,onboarding_id)
 
-    //handle update asset
+    //!handle update asset
   }else if (key === "company_asset_id"){
 
     const is_add = onboardingUpdate.company_asset.is_add
@@ -165,7 +167,7 @@ const updateOnboardingById = async (payload, result) => {
     
 
 
-    //handle update onboarding
+    //!handle update onboarding
   } else {
 
     await update_onboarding(processed_data,onboarding_id)
@@ -177,12 +179,41 @@ const updateOnboardingById = async (payload, result) => {
 
   await mondayUtils.updateMondayOnBoarding(id,processed_data)
 
-
-
-
+  //!update monday progress!
+  await updateMondayProgress(id,onboarding_id)
+  
 
 return result({status:200})
   
+}
+
+const updateMondayProgress = async (uuid,id) => {
+
+  const progress = await getProgress(id)
+
+  await mondayUtils.updateMondayOnBoarding(uuid,{progress})
+
+}
+
+const getProgress = async (id) => {
+
+  const [requied_fields] = await dbHelper.get(queries.get_required_fields(id))
+
+  var fields_count = Object.entries(requied_fields).reduce((acc,[key,value])=>{
+
+    if (value) acc++
+
+    return acc
+
+  },0)
+
+  const checked_assets = await dbHelper.get(utilQueries.get_checked_assets(id))
+
+  fields_count = checked_assets.length? fields_count + 1 : fields_count
+
+return fields_count
+
+
 }
 
 const update_contact  = async (data,id) => {
@@ -194,9 +225,10 @@ const update_contact  = async (data,id) => {
 
 const update_asset = async ({company_asset_id,onboarding_id},id,is_add) => {
 
-if (is_add) dbHelper.get(queries.insert_asset(onboarding_id,company_asset_id))
 
-else dbHelper.get(queries.remove_asset(onboarding_id,company_asset_id))
+if (is_add) company_asset_id.forEach(async asset => await dbHelper.get(queries.insert_asset(onboarding_id,asset)))  
+
+else company_asset_id.forEach(async asset => await dbHelper.get(queries.remove_asset(onboarding_id,asset))) 
 
 
 }
@@ -308,15 +340,16 @@ const process_payload = async (data,result,uuid = null,ip) => {
         break
 
       case "company_asset":
-        const {asset_id} = val
+        var {asset_id} = val
+        asset_id = asset_id.map(asset => `"${asset}"`)
         //get onboarding id
         var [onboarding_id] = await dbHelper.get(queries.get_id_by_uuid(uuid))
         onboarding_id = onboarding_id.id
-        //get asset id
-        var [asset__id] = await dbHelper.get(utilQueries.get_asset_id(asset_id))
-        asset__id = asset__id.asset_id
+        //get assets ids
+        var assets_ids = await dbHelper.get(queries.get_assets_ids(asset_id)) 
+        assets_ids = assets_ids.map(asset => asset.id)
 
-        processed_data["company_asset_id"] = asset__id
+        processed_data["company_asset_id"] = assets_ids
         processed_data["onboarding_id"] = onboarding_id
 
         break
@@ -338,7 +371,8 @@ const process_payload = async (data,result,uuid = null,ip) => {
         break
 
       case "contact_phone":
-        processed_data["phone"] = JSON.stringify(val)
+        const phone = val.map(phone => phone.dialing_code + '-' + phone.number + ',')
+        processed_data["phone"] = JSON.stringify(phone)
         break
 
       

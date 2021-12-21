@@ -41,14 +41,31 @@ const get_id_by_uuid = (uuid) => {
   return `SELECT id FROM onboarding WHERE uuid='${uuid}'`
 }
 
-const insert_asset = (onboarding_id,asset_id) => {
-  return `insert into onboarding_has_company_asset values(${onboarding_id},${asset_id});`
+const insert_asset = (onboardingId,assetId) => {
+  return `
+  INSERT INTO onboarding_has_company_asset(onboarding_id,company_asset_id) VALUES(${onboardingId},${assetId}) ON DUPLICATE KEY UPDATE onboarding_id=${onboardingId},company_asset_id=${assetId};`
 }
 
 const remove_asset = (onboarding_id,asset_id) => {
   return `delete from onboarding_has_company_asset where onboarding_id=${onboarding_id} and company_asset_id=${asset_id};`
 }
 
+const clear_all_assets = () => {
+  return `DELETE FROM onboarding_has_company_asset;`
+}
+
+const get_assets_ids = (uuids) => {
+  return `SELECT id from company_asset WHERE uuid in (${uuids})`
+}
+
+const get_required_fields = (id) => {
+  return `
+  select onboarding.country_id,onboarding.company_id,onboarding.legal_entity_name,onboarding_contact.email
+from onboarding join onboarding_contact 
+on onboarding.id = onboarding_contact.onboarding_id 
+where onboarding.id = ${id}
+  `
+}
 
 
 
@@ -62,7 +79,10 @@ module.exports = {
     update_onboarding_by_uuid,
     update_onboarding_contact_by_id,
     insert_asset,
-    remove_asset
+    remove_asset,
+    clear_all_assets,
+    get_assets_ids,
+    get_required_fields
 }
 
 
