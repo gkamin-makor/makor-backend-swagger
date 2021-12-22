@@ -34,6 +34,8 @@ const get_onboarding = async (payload, result) => {
 
   const {id} = payload
 
+
+
   var [onboarding_id] = await dbHelper.get(queries.get_id_by_uuid(id))
   onboarding_id = onboarding_id.id
 
@@ -61,7 +63,6 @@ const get_onboarding = async (payload, result) => {
 const createOnboarding = async (payload, result) => {
 
 
-
     const unprocessed_data = payload.onboardingCreate
 
 
@@ -79,6 +80,8 @@ const createOnboarding = async (payload, result) => {
 
 
     const onboarding_id = await createOnboardingFunc(onboardingData)
+
+
 
 
    //! create onboarding contact

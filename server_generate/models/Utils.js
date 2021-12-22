@@ -56,6 +56,7 @@ const get_assets = async (payload,result) => {
     const {id} = payload
 
 
+
     var [company_id] = await dbHelper.get(queries.get_company_id(id))
     company_id = company_id.id
 
