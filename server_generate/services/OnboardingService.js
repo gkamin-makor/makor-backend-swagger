@@ -15,6 +15,19 @@ const createOnboarding = (payload) =>
     })
   })
 /*
+* get onboarding data
+* get onboarding data
+*
+* id UUID id of the onboarding
+* no response value expected for this operation
+*/
+const get_onboarding = (payload) =>
+  new Promise((resolve) => {
+    model.get_onboarding(payload, ({ data, status }) => {
+      resolve(Service.successResponse(data, status || 500))
+    })
+  })
+/*
 * update onboarding by id
 *  update onboarding by id
 *
@@ -31,5 +44,6 @@ const updateOnboardingById = (payload) =>
 
 module.exports = {
   createOnboarding,
+  get_onboarding,
   updateOnboardingById,
 }

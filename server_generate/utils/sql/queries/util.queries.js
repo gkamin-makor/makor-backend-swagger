@@ -14,6 +14,46 @@ const get_company_id = (uuid) => {
     return `SELECT id FROM company where uuid='${uuid}';`
 }
 
+const get_countries = () => {
+    return `SELECT name,iso_code_2 as id FROM country;`
+}
+
+const get_positions = () => {
+    return `SELECT name,uuid as id FROM contact_position;`
+}
+
+const get_states = () => {
+    return `SELECT name,abbreviation as id FROM us_state;`
+}
+
+const get_regulators = () => {
+    return `SELECT name,uuid as id FROM regulator;`
+}
+
+const get_companies = () => {
+    return `SELECT name,uuid as id FROM company;`
+}
+
+const get_dials = () => {
+    return `SELECT dialing_code,iso_code_2 as id FROM country;`
+}
+
+
+
+const get_assets_by_company_id = (company_id) => {
+
+    return `
+      SELECT company_asset.uuid as id, asset.name AS asset_name, mode.name AS mode_name
+       FROM company_asset JOIN asset JOIN mode
+        ON company_asset.asset_id = asset.id AND company_asset.mode_id = mode.id
+         WHERE is_active = 1 AND company_id = ${company_id};`
+  
+  }
+
+  const clear_all_assets = () => {
+      return `DELETE FROM onboarding_has_company_asset;`
+  }
+
 const get_country_id = (code) => {
     return `SELECT id FROM country WHERE  iso_code_2='${code}';`
 }
@@ -73,6 +113,13 @@ const get_checked_assets = (id) => {
     `
 }
 
+const get_checked_assets_by_id = (id) => {
+    return `select company_asset.uuid 
+    from company_asset join onboarding_has_company_asset
+    on company_asset.id = onboarding_has_company_asset.company_asset_id
+    WHERE onboarding_has_company_asset.onboarding_id = ${id}`
+}
+
 
 
 
@@ -93,5 +140,14 @@ module.exports = {
     get_checked_assets_ids,
     get_assets_names,
     get_table_name,
-    get_checked_assets
+    get_checked_assets,
+    get_countries,
+    get_positions,
+    get_states,
+    get_regulators,
+    get_companies,
+    get_dials,
+    get_assets_by_company_id,
+    clear_all_assets,
+    get_checked_assets_by_id
 }

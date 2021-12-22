@@ -41,6 +41,11 @@ const get_id_by_uuid = (uuid) => {
   return `SELECT id FROM onboarding WHERE uuid='${uuid}'`
 }
 
+
+const get_uuid_by_id = (id) => {
+  return `SELECT uuid FROM onboarding WHERE id=${id}`
+}
+
 const insert_asset = (onboardingId,assetId) => {
   return `
   INSERT INTO onboarding_has_company_asset(onboarding_id,company_asset_id) VALUES(${onboardingId},${assetId}) ON DUPLICATE KEY UPDATE onboarding_id=${onboardingId},company_asset_id=${assetId};`
@@ -67,6 +72,23 @@ where onboarding.id = ${id}
   `
 }
 
+const get_onboarding_data_to_show = (uuid) => {
+  return `SELECT onboarding.legal_entity_name as company_name,onboarding.legal_entity_identifier as LEI,onboarding.registration_gapi_location as address,onboarding.regulation_number as regulation_number,onboarding.activity_description as comment,regulator.uuid as regulator_id,us_state.abbreviation as state_id,country.iso_code_2 as country_id,company.uuid as company_id 
+  FROM onboarding 
+  left join regulator on onboarding.regulator_id = regulator.id
+  left join us_state on onboarding.us_state_id = us_state.id
+  left join country on onboarding.country_id = country.id 
+  left join company on onboarding.company_id = company.id 
+  where onboarding.uuid='${uuid}';`
+}
+
+const get_onboarding_contact_data_to_show = (id) => {
+  return `SELECT onboarding_contact.name, onboarding_contact.email, onboarding_contact.phone,contact_position.uuid as position_id
+  From onboarding_contact join contact_position
+  ON onboarding_contact.contact_position_id = contact_position.id
+  WHERE onboarding_contact.onboarding_id = ${id};`
+}
+
 
 
 
@@ -82,7 +104,10 @@ module.exports = {
     remove_asset,
     clear_all_assets,
     get_assets_ids,
-    get_required_fields
+    get_required_fields,
+    get_onboarding_data_to_show,
+    get_onboarding_contact_data_to_show,
+    get_uuid_by_id
 }
 
 

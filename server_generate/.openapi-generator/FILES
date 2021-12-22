@@ -4,6 +4,7 @@ api/openapi.yaml
 config.js
 controllers/Controller.js
 controllers/OnboardingController.js
+controllers/UtilsController.js
 controllers/index.js
 expressServer.js
 index.js
@@ -11,5 +12,6 @@ logger.js
 package.json
 services/OnboardingService.js
 services/Service.js
+services/UtilsService.js
 services/index.js
 utils/openapiRouter.js

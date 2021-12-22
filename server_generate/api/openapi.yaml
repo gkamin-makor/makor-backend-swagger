@@ -7,12 +7,184 @@ info:
   version: 1.0.0
 servers:
 - description: LOCAL server
-  url: http://localhost:8096
+  url: http://10.0.0.197:8096
 - description: DEV server
   url: http://10.0.0.34:8096
 tags:
 - name: onboarding
+- name: utils
 paths:
+  /utils/country:
+    get:
+      description: get countries data
+      operationId: get_countries
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/country'
+          description: successful operation
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: get countries data
+      tags:
+      - utils
+      x-eov-operation-handler: controllers/UtilsController
+  /utils/position:
+    get:
+      description: get positions data
+      operationId: get_positions
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/position'
+          description: successful operation
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: get positions data
+      tags:
+      - utils
+      x-eov-operation-handler: controllers/UtilsController
+  /utils/state:
+    get:
+      description: get states data
+      operationId: get_states
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/state'
+          description: successful operation
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: get states data
+      tags:
+      - utils
+      x-eov-operation-handler: controllers/UtilsController
+  /utils/regulator:
+    get:
+      description: get regulators data
+      operationId: get_regulators
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/regulator'
+          description: successful operation
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: get regulators data
+      tags:
+      - utils
+      x-eov-operation-handler: controllers/UtilsController
+  /utils/company:
+    get:
+      description: get companies data
+      operationId: get_companies
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/company'
+          description: successful operation
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: get companies data
+      tags:
+      - utils
+      x-eov-operation-handler: controllers/UtilsController
+  /utils/dials:
+    get:
+      description: get dials data
+      operationId: get_dials
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dial'
+          description: successful operation
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: get dials data
+      tags:
+      - utils
+      x-eov-operation-handler: controllers/UtilsController
+  /utils/assets/{id}:
+    get:
+      description: get company assets
+      operationId: get_assets
+      parameters:
+      - description: id of the onboarding
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/asset'
+          description: successful operation
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: get company assets
+      tags:
+      - utils
+      x-eov-operation-handler: controllers/UtilsController
   /onboarding:
     post:
       operationId: createOnboarding
@@ -39,6 +211,34 @@ paths:
       - onboarding
       x-eov-operation-handler: controllers/OnboardingController
   /onboarding/{id}:
+    get:
+      description: get onboarding data
+      operationId: get_onboarding
+      parameters:
+      - description: id of the onboarding
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: get onboarding data
+      tags:
+      - onboarding
+      x-eov-operation-handler: controllers/OnboardingController
     put:
       description: ' update onboarding by id'
       operationId: updateOnboardingById
@@ -166,6 +366,94 @@ components:
             $ref: '#/components/schemas/onboarding_create_contact_phone'
           type: array
       type: object
+    country:
+      example:
+      - name: Israel
+        id: IL
+      items:
+        properties:
+          name:
+            type: string
+          id:
+            type: string
+        type: object
+      type: array
+    position:
+      example:
+      - name: Trader
+        id: 4b3e45da-60a3-11ec-a1a2-d08e7912923c
+      items:
+        properties:
+          name:
+            type: string
+          id:
+            format: uuid
+            type: string
+        type: object
+      type: array
+    state:
+      example:
+      - name: Alabama
+        id: AL
+      items:
+        properties:
+          name:
+            type: string
+          id:
+            type: string
+        type: object
+      type: array
+    regulator:
+      example:
+      - name: FCA
+        id: 4b3e45da-60a3-11ec-a1a2-d08e7912923c
+      items:
+        properties:
+          name:
+            type: string
+          id:
+            format: uuid
+            type: string
+        type: object
+      type: array
+    company:
+      example:
+      - name: Enigma
+        id: 4b3e45da-60a3-11ec-a1a2-d08e7912923c
+      items:
+        properties:
+          name:
+            type: string
+          id:
+            format: uuid
+            type: string
+        type: object
+      type: array
+    dial:
+      example:
+      - dial_code: "93"
+        id: AF
+      items:
+        properties:
+          dial_code:
+            type: string
+          id:
+            type: string
+        type: object
+      type: array
+    asset:
+      example:
+      - name: Fixed income
+        id: 4b3a2d1e-60a3-11ec-a1a2-d08e7912923c
+      items:
+        properties:
+          name:
+            type: string
+          id:
+            format: uuid
+            type: string
+        type: object
+      type: array
     onboarding_create_contact_phone:
       properties:
         dialing_code:

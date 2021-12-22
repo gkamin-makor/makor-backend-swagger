@@ -2,6 +2,7 @@ const dbHelper = require("../utils/db/db_helper");
 const queries = require("../utils/sql/queries/onboarding.queries");
 const utilQueries = require("../utils/sql/queries/util.queries");
 const mondayUtils = require('../utils/monday-utils')
+const emailUtils = require('../utils/email-utils')
 const moment = require('moment')
 
 const handleIp = (ip) => {
@@ -24,6 +25,34 @@ const handleIp = (ip) => {
   }
 
   return ip_to_save
+
+}
+
+//! route func
+
+const get_onboarding = async (payload, result) => {
+
+  const {id} = payload
+
+  var [onboarding_id] = await dbHelper.get(queries.get_id_by_uuid(id))
+  onboarding_id = onboarding_id.id
+
+
+  const [onboarding_data] = await dbHelper.get(queries.get_onboarding_data_to_show(id))
+
+  const [onboarding_contact_data] = await dbHelper.get(queries.get_onboarding_contact_data_to_show(onboarding_id))
+
+  var checked_assets = await dbHelper.get(utilQueries.get_checked_assets_by_id(onboarding_id))
+
+  checked_assets = checked_assets.map(asset => asset.uuid)
+
+  var progress = await getProgress(onboarding_id)
+  progress = progress / 5 * 100
+
+  const data = {...onboarding_data,...onboarding_contact_data,checked_assets,progress}
+
+
+  return result({data,status:200})
 
 }
 
@@ -97,11 +126,22 @@ const createOnboarding = async (payload, result) => {
 
     await updateOnboardingFunc(onboarding_id,fieldToUpdate)
 
+    //!send mail!
+
+    var [onboarding_uuid] = await dbHelper.get(queries.get_uuid_by_id(onboarding_id))
+    onboarding_uuid = onboarding_uuid.uuid
+
+
+    const _email = JSON.parse(email)
+
+    _email.forEach(async email => await emailUtils.sendEmail(email,onboarding_uuid))
+
+
 
     result({status:200})
 
                                           
-};
+}
 
 const createOnboardingFunc = async (onboardingData) => {
 
@@ -179,17 +219,19 @@ const updateOnboardingById = async (payload, result) => {
 
   await mondayUtils.updateMondayOnBoarding(id,processed_data)
 
-  //!update monday progress!
-  await updateMondayProgress(id,onboarding_id)
-  
+  //!update monday progress and send the progress back!
 
-return result({status:200})
+  var progress = await getProgress(onboarding_id)
+  await updateMondayProgress(id,onboarding_id,progress)
+
+  progress = progress / 5 * 100
+  
+return result({status:200,data:{progress}})
   
 }
+ 
+const updateMondayProgress = async (uuid,id,progress) => {
 
-const updateMondayProgress = async (uuid,id) => {
-
-  const progress = await getProgress(id)
 
   await mondayUtils.updateMondayOnBoarding(uuid,{progress})
 
@@ -238,13 +280,16 @@ const update_onboarding = async (data,id) => {
 
   await dbHelper.update(queries.update_onboarding(id,data),data)
 
+  if (Object.keys(data)[0] === "company_id") dbHelper.get(utilQueries.clear_all_assets())
+
 
 }
 
 
 module.exports = {
   createOnboarding,
-  updateOnboardingById
+  updateOnboardingById,
+  get_onboarding
 };
 
 const process_payload = async (data,result,uuid = null,ip) => {
